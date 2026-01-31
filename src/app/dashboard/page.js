@@ -221,7 +221,7 @@ function DashboardContent() {
                             : `Listando ${filteredUsers.length} registros nesta categoria.`}
                     </p>
                 </div>
-                <button className={styles.btnPrimary} onClick={() => setShowModal(true)}>
+                <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => setShowModal(true)}>
                     <LinkIcon size={18} style={{ marginRight: '8px' }} />
                     Gerar Link de Convite
                 </button>
@@ -488,7 +488,7 @@ function DashboardContent() {
                         </div>
 
                         <div className={styles.modalActions} style={{ justifyContent: 'center' }}>
-                            <button onClick={() => setHistoryModal({ ...historyModal, open: false })} className={styles.btnSecondary}>Fechar Histórico</button>
+                            <button onClick={() => setHistoryModal({ ...historyModal, open: false })} className={`${styles.btn} ${styles.btnSecondary}`}>Fechar Histórico</button>
                         </div>
                     </motion.div>
                 </div>
@@ -501,7 +501,7 @@ function DashboardContent() {
                         <h2>{confirmModal.title}</h2>
                         <p className={styles.modalBody}>{confirmModal.desc}</p>
                         <div className={styles.modalActions}>
-                            <button onClick={() => setConfirmModal({ ...confirmModal, open: false })} className={styles.btnSecondary}>Cancelar</button>
+                            <button onClick={() => setConfirmModal({ ...confirmModal, open: false })} className={`${styles.btn} ${styles.btnSecondary}`}>Cancelar</button>
                             <button
                                 onClick={confirmAction}
                                 className={`${styles.btn} ${confirmModal.type === 'remove' ? styles.btnDanger : styles.btnPrimary}`}

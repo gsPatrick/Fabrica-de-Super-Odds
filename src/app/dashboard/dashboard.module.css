@@ -328,23 +328,26 @@
     font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
-    transition: all 0.2s ease;
-    border: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .btnPrimary {
     background: var(--foreground);
     color: var(--surface);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .btnPrimary:hover {
+    background: #000;
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .btnSecondary {
-    background: white;
+    background: #FFFFFF;
     color: var(--foreground);
     border: 1px solid var(--border);
 }
@@ -352,36 +355,39 @@
 .btnSecondary:hover {
     background: #F9FAFB;
     border-color: var(--border-strong);
+    transform: translateY(-1px);
 }
 
 .btnDanger {
     background: #FEF2F2;
     color: #DC2626;
+    border: 1px solid #FEE2E2;
 }
 
 .btnDanger:hover {
     background: #FEE2E2;
+    transform: translateY(-1px);
 }
 
 .btnLarge {
     background: var(--foreground);
     color: var(--surface);
-    padding: 16px 48px;
-    border-radius: 12px;
+    padding: 18px 48px;
+    border-radius: 16px;
     font-weight: 700;
     font-size: 1.1rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     border: none;
     width: 100%;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .btnLarge:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2);
 }
 
 .btnLarge:active {
-    transform: translateY(1px);
+    transform: translateY(0) scale(0.98);
 }
