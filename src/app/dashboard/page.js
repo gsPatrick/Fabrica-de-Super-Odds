@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'; // Read URL
 import Skeleton from '@/components/Skeleton/Skeleton';
 import styles from './dashboard.module.css';
 import { motion } from 'framer-motion';
-import { Plus, Trash2, ShieldOff, User, Calendar, FolderOpen, Clock, AlertTriangle, FileText } from 'lucide-react';
+import { Plus, Trash2, ShieldOff, User, Calendar, FolderOpen, Clock, AlertTriangle, FileText, Copy, Link as LinkIcon } from 'lucide-react';
 import BarChart from '@/components/Chart/BarChart';
 
 function DashboardContent() {
@@ -15,7 +15,7 @@ function DashboardContent() {
     const [confirmModal, setConfirmModal] = useState({ open: false, type: '', data: null }); // Confirmation Action Modal
     const [feedbackModal, setFeedbackModal] = useState({ open: false, type: 'success', message: '' }); // Success/Error Feedback
 
-    const [newUser, setNewUser] = useState({ id: '', start: '', end: '' });
+    const [inviteLink, setInviteLink] = useState(''); // Stores generated link
     // Init with Zeros to satisfy "Make it appear even if zeroed"
     const [analytics, setAnalytics] = useState({
         users: { total: 0, active: 0, blocked: 0, pending: 0 },
@@ -73,18 +73,39 @@ function DashboardContent() {
     };
 
 
-    // 1. Trigger Confirmation for Create
-    const handlePreAllow = (e) => {
-        e.preventDefault();
-        setShowModal(false); // Close form
-        setConfirmModal({
-            open: true,
-            type: 'allow',
-            data: newUser,
-            title: 'Confirmar Autorização',
-            desc: `O usuário ${newUser.id} será autorizado e receberá uma notificação automática via Telegram. Deseja continuar?`,
-            loading: false
-        });
+    // 1. Generate Invite Link
+    const createInvite = async () => {
+        try {
+            setLoading(true);
+            const res = await fetch(`${API_URL}/api/admin/users/invite`, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify({ days: 30 }) // Default 30 days
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setInviteLink(data.link);
+            } else {
+                setFeedbackModal({ open: true, type: 'error', message: 'Falha ao gerar link.' });
+            }
+        } catch (error) {
+            console.error(error);
+            setFeedbackModal({ open: true, type: 'error', message: 'Erro de conexão.' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const copyToClipboard = () => {
+        if (inviteLink) {
+            navigator.clipboard.writeText(inviteLink);
+            setFeedbackModal({ open: true, type: 'success', message: 'Link copiado!' });
+        }
+    };
+
+    const closeInviteModal = () => {
+        setShowModal(false);
+        setInviteLink('');
     };
 
     // 2. Trigger Confirmation for Actions
@@ -185,8 +206,8 @@ function DashboardContent() {
                     </p>
                 </div>
                 <button className="senior-btn" onClick={() => setShowModal(true)}>
-                    <Plus size={18} style={{ marginRight: '8px' }} />
-                    Autorizar Aluno
+                    <LinkIcon size={18} style={{ marginRight: '8px' }} />
+                    Gerar Link de Convite
                 </button>
             </header>
 
@@ -339,26 +360,59 @@ function DashboardContent() {
                         animate={{ scale: 1, opacity: 1 }}
                         className={styles.modal}
                     >
-                        <h2>Autorizar Acesso</h2>
-                        <form onSubmit={handlePreAllow}>
+                        <h2>Link de Convite (30 Dias)</h2>
+
+                        {!inviteLink ? (
+                            <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                                <p className={styles.modalBody} style={{ marginBottom: '24px' }}>
+                                    Gere um link único para enviar ao aluno. <br />
+                                    Ao clicar em "Começar" no Telegram, o acesso dele será liberado automaticamente.
+                                </p>
+                                <button
+                                    onClick={createInvite}
+                                    className={`${styles.btn} ${styles.btnPrimary}`}
+                                    disabled={loading}
+                                >
+                                    {loading ? 'Gerando...' : 'Gerar Link Agora'}
+                                </button>
+                                <button
+                                    onClick={closeInviteModal}
+                                    className={`${styles.btn} ${styles.btnSecondary}`}
+                                    style={{ marginLeft: '10px' }}
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        ) : (
                             <div className={styles.formGroup}>
-                                <label>ID Telegram ou @Username</label>
-                                <input
-                                    className="senior-input"
-                                    placeholder="@exemplo"
-                                    value={newUser.id}
-                                    onChange={e => setNewUser({ ...newUser, id: e.target.value })}
-                                    required
-                                />
+                                <label>Link Gerado:</label>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <input
+                                        className="senior-input"
+                                        readOnly
+                                        value={inviteLink}
+                                    />
+                                    <button
+                                        className={`${styles.btn} ${styles.btnPrimary}`}
+                                        onClick={copyToClipboard}
+                                        title="Copiar"
+                                    >
+                                        <Copy size={18} />
+                                    </button>
+                                </div>
+                                <p className={styles.modalHint} style={{ marginTop: '16px' }}>
+                                    Envie este link para o aluno. Ele é válido por 24 horas.
+                                </p>
+                                <div className={styles.modalActions}>
+                                    <button
+                                        onClick={closeInviteModal}
+                                        className={`${styles.btn} ${styles.btnSecondary}`}
+                                    >
+                                        Fechar
+                                    </button>
+                                </div>
                             </div>
-                            <p className={styles.modalHint}>
-                                O usuário terá acesso liberado imediatamente por <strong>30 dias</strong> padrão.
-                            </p>
-                            <div className={styles.modalActions}>
-                                <button type="button" onClick={() => setShowModal(false)} className={styles.btnSecondary}>Cancelar</button>
-                                <button type="submit" className={styles.btnPrimary}>Continuar</button>
-                            </div>
-                        </form>
+                        )}
                     </motion.div>
                 </div>
             )}
