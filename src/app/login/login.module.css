@@ -1,54 +1,190 @@
 .container {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--surface);
+}
+
+/* Image Section (Now Left) */
+.imageSection {
+    flex: 1.1;
+    /* Slightly larger */
+    background-image: url('/login.png');
+    background-size: cover;
+    background-position: center;
     position: relative;
-    overflow: hidden;
+    display: none;
+    /* Mobile Hidden */
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 60px;
 }
 
-.glow {
+.imageOverlay {
     position: absolute;
-    width: 60vw;
-    height: 60vw;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(14, 14, 14, 0) 70%);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: -1;
-    pointer-events: none;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2) 60%, transparent);
 }
 
-.loginCard {
-    width: 100%;
-    max-width: 400px;
-    background: rgba(14, 15, 17, 0.6);
-    /* Slightly darker */
-    border: 1px solid rgba(255, 255, 255, 0.08);
+.testimonial {
+    position: relative;
+    z-index: 2;
+    color: white;
+    max-width: 480px;
 }
 
-.title {
+.quote {
     font-size: 1.5rem;
     font-weight: 500;
-    letter-spacing: -0.03em;
-    margin-bottom: 0.25rem;
-    color: var(--foreground);
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    font-family: var(--font-sans);
 }
 
-.subtitle {
-    font-size: 0.875rem;
-    color: #888;
-    margin-bottom: 2.5rem;
-    font-weight: 400;
+.author {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+/* Form Section (Now Right) */
+.formSection {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: var(--surface);
+    position: relative;
+    z-index: 2;
+}
+
+.contentWrapper {
+    width: 100%;
+    max-width: 380px;
+    /* Tighter for premium feel */
+}
+
+.header {
+    margin-bottom: 40px;
+}
+
+.brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 32px;
+    letter-spacing: -0.02em;
+}
+
+.brandAccent {
+    color: var(--accent);
+}
+
+.portalTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 12px;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+
+.instruction {
+    font-size: 1rem;
+    color: var(--text-secondary);
 }
 
 .form {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 20px;
 }
 
-.button {
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.premiumInput {
     width: 100%;
-    margin-top: 1rem;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #F9FAFB;
+    /* Very subtle gray background for inputs */
+    font-size: 1rem;
+    color: var(--foreground);
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.premiumInput:focus {
+    background: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-light);
+}
+
+.premiumBtn {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: var(--foreground);
+    /* Use standard black/dark button styling */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.premiumBtn:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+.footer {
+    margin-top: 60px;
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    text-align: center;
+}
+
+.spinner {
+    margin-right: 8px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+    .imageSection {
+        display: flex;
+    }
 }
