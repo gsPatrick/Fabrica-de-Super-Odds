@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'; // Read URL
 import Skeleton from '@/components/Skeleton/Skeleton';
 import styles from './dashboard.module.css';
 import { motion } from 'framer-motion';
-import { Plus, Trash2, ShieldOff, User, Calendar, FolderOpen, Clock, AlertTriangle, FileText, Copy, Link as LinkIcon } from 'lucide-react';
+import { Plus, Trash2, ShieldOff, User, Calendar, FolderOpen, Clock, AlertTriangle, FileText, Copy, Link as LinkIcon, CheckCircle2, XCircle } from 'lucide-react';
 import BarChart from '@/components/Chart/BarChart';
 
 function DashboardContent() {
@@ -451,14 +451,32 @@ function DashboardContent() {
             {/* Feedback Modal */}
             {feedbackModal.open && (
                 <div className={styles.modalOverlay} style={{ zIndex: 120 }}>
-                    <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className={styles.modal} style={{ textAlign: 'center' }}>
-                        <div style={{ margin: '0 auto 16px', color: feedbackModal.type === 'error' ? 'var(--error)' : 'var(--success)' }}>
-                            {feedbackModal.type === 'error' ? <AlertTriangle size={48} /> : <div style={{ fontSize: '3rem' }}>🎉</div>}
+                    <motion.div 
+                        initial={{ scale: 0.9, opacity: 0 }} 
+                        animate={{ scale: 1, opacity: 1 }} 
+                        className={styles.modal} 
+                        style={{ textAlign: 'center', maxWidth: '400px', padding: '40px' }}
+                    >
+                        <div style={{ marginBottom: '24px' }}>
+                            {feedbackModal.type === 'error' ? (
+                                <XCircle size={64} color="var(--error)" />
+                            ) : (
+                                <CheckCircle2 size={64} color="var(--success)" />
+                            )}
                         </div>
-                        <h2>{feedbackModal.type === 'error' ? 'Erro' : 'Sucesso!'}</h2>
-                        <p className={styles.modalBody}>{feedbackModal.message}</p>
+                        <h2 style={{ fontSize: '1.75rem', marginBottom: '12px' }}>
+                            {feedbackModal.type === 'error' ? 'Ops! Algo deu errado' : 'Tudo certo!'}
+                        </h2>
+                        <p className={styles.modalBody} style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', marginBottom: '32px' }}>
+                            {feedbackModal.message}
+                        </p>
                         <div className={styles.modalActions} style={{ justifyContent: 'center' }}>
-                            <button onClick={() => setFeedbackModal({ ...feedbackModal, open: false })} className={styles.btnPrimary}>OK</button>
+                            <button 
+                                onClick={() => setFeedbackModal({ ...feedbackModal, open: false })} 
+                                className={styles.btnLarge}
+                            >
+                                Entendido
+                            </button>
                         </div>
                     </motion.div>
                 </div>
