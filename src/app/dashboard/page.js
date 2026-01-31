@@ -16,6 +16,7 @@ function DashboardContent() {
     const [feedbackModal, setFeedbackModal] = useState({ open: false, type: 'success', message: '' }); // Success/Error Feedback
 
     const [inviteLink, setInviteLink] = useState(''); // Stores generated link
+    const [inviteName, setInviteName] = useState(''); // Name for the invite
     // Init with Zeros to satisfy "Make it appear even if zeroed"
     const [analytics, setAnalytics] = useState({
         users: { total: 0, active: 0, blocked: 0, pending: 0 },
@@ -80,7 +81,7 @@ function DashboardContent() {
             const res = await fetch(`${API_URL}/api/admin/users/invite`, {
                 method: 'POST',
                 headers: getHeaders(),
-                body: JSON.stringify({ days: 30 }) // Default 30 days
+                body: JSON.stringify({ days: 30, name: inviteName }) // Custom name
             });
             if (res.ok) {
                 const data = await res.json();
@@ -106,6 +107,7 @@ function DashboardContent() {
     const closeInviteModal = () => {
         setShowModal(false);
         setInviteLink('');
+        setInviteName('');
     };
 
     // 2. Trigger Confirmation for Actions
@@ -364,10 +366,19 @@ function DashboardContent() {
 
                         {!inviteLink ? (
                             <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                                <p className={styles.modalBody} style={{ marginBottom: '24px' }}>
+                                <p className={styles.modalBody} style={{ marginBottom: '16px' }}>
                                     Gere um link único para enviar ao aluno. <br />
-                                    Ao clicar em "Começar" no Telegram, o acesso dele será liberado automaticamente.
+                                    O nome será registrado automaticamente quando ele aceitar.
                                 </p>
+                                <div className={styles.formGroup} style={{ marginBottom: '24px', textAlign: 'left' }}>
+                                    <label>Nome do Aluno (Opcional)</label>
+                                    <input
+                                        className="senior-input"
+                                        placeholder="Ex: João Silva"
+                                        value={inviteName}
+                                        onChange={(e) => setInviteName(e.target.value)}
+                                    />
+                                </div>
                                 <button
                                     onClick={createInvite}
                                     className={`${styles.btn} ${styles.btnPrimary}`}
