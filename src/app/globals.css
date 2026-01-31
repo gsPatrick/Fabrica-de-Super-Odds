@@ -1,0 +1,83 @@
+:root {
+  --background: #0e0e0e;
+  --foreground: #ededed;
+
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --card-border: rgba(255, 255, 255, 0.05);
+
+  --accent: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.15);
+
+  --error: #ef4444;
+  --success: #22c55e;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  letter-spacing: -0.015em;
+  /* Tight tracking */
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Utilities */
+.glass {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+}
+
+.cinematic-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--foreground);
+  padding: 12px 0;
+  width: 100%;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  outline: none;
+}
+
+.cinematic-input:focus {
+  border-color: var(--accent);
+}
+
+.cinematic-button {
+  background: var(--foreground);
+  color: var(--background);
+  border: none;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  letter-spacing: -0.01em;
+}
+
+.cinematic-button:hover {
+  opacity: 0.9;
+}
+
+.cinematic-button:active {
+  transform: scale(0.98);
+}
