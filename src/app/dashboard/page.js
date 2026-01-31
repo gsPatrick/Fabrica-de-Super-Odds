@@ -364,8 +364,8 @@ return (
                             O usuário terá acesso liberado imediatamente por <strong>30 dias</strong> padrão.
                         </p>
                         <div className={styles.modalActions}>
-                            <button type="button" onClick={() => setShowModal(false)} className="senior-btn-secondary">Cancelar</button>
-                            <button type="submit" className="senior-btn">Continuar</button>
+                            <button type="button" onClick={() => setShowModal(false)} className={styles.btnSecondary}>Cancelar</button>
+                            <button type="submit" className={styles.btnPrimary}>Continuar</button>
                         </div>
                     </form>
                 </motion.div>
@@ -379,10 +379,10 @@ return (
                     <h2>{confirmModal.title}</h2>
                     <p className={styles.modalBody}>{confirmModal.desc}</p>
                     <div className={styles.modalActions}>
-                        <button onClick={() => setConfirmModal({ ...confirmModal, open: false })} className="senior-btn-secondary">Cancelar</button>
+                        <button onClick={() => setConfirmModal({ ...confirmModal, open: false })} className={styles.btnSecondary}>Cancelar</button>
                         <button
                             onClick={confirmAction}
-                            className={`senior-btn ${confirmModal.type === 'remove' ? 'btn-danger' : ''}`}
+                            className={`${styles.btn} ${confirmModal.type === 'remove' ? styles.btnDanger : styles.btnPrimary}`}
                             disabled={confirmModal.loading}
                         >
                             {confirmModal.loading ? 'Processando...' : 'Confirmar'}
@@ -402,7 +402,7 @@ return (
                     <h2>{feedbackModal.type === 'error' ? 'Erro' : 'Sucesso!'}</h2>
                     <p className={styles.modalBody}>{feedbackModal.message}</p>
                     <div className={styles.modalActions} style={{ justifyContent: 'center' }}>
-                        <button onClick={() => setFeedbackModal({ ...feedbackModal, open: false })} className="senior-btn">OK</button>
+                        <button onClick={() => setFeedbackModal({ ...feedbackModal, open: false })} className={styles.btnPrimary}>OK</button>
                     </div>
                 </motion.div>
             </div>
