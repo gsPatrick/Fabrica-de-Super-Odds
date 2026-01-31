@@ -102,6 +102,7 @@ function DashboardContent() {
         if (inviteLink) {
             navigator.clipboard.writeText(inviteLink);
             setFeedbackModal({ open: true, type: 'success', message: 'Link copiado!' });
+            setShowModal(false); // Close the invite modal automatically
         }
     };
 
