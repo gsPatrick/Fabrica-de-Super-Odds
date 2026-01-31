@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation'; // Read URL
 import Skeleton from '@/components/Skeleton/Skeleton';
 import styles from './dashboard.module.css';
@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { Plus, Trash2, ShieldOff, User, Calendar, FolderOpen, Clock, AlertTriangle, FileText } from 'lucide-react';
 import BarChart from '@/components/Chart/BarChart';
 
-export default function DashboardPage() {
+function DashboardContent() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false); // Input Form Modal
@@ -399,5 +399,24 @@ export default function DashboardPage() {
                 </div>
             )}
         </motion.div>
+    );
+}
+
+export default function DashboardPage() {
+    return (
+        <Suspense fallback={
+            <div className={styles.container}>
+                <div className={styles.header}>
+                    <Skeleton width="200px" height="40px" />
+                </div>
+                <div className={styles.statsGrid}>
+                    <Skeleton height="100px" className={styles.statCard} />
+                    <Skeleton height="100px" className={styles.statCard} />
+                    <Skeleton height="100px" className={styles.statCard} />
+                </div>
+            </div>
+        }>
+            <DashboardContent />
+        </Suspense>
     );
 }
