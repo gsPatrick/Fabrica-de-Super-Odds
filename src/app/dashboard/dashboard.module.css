@@ -337,9 +337,54 @@
     gap: 16px;
 }
 
+/* Modal Actions */
 .modalActions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
     margin-top: 32px;
+}
+
+/* Local Button Styles for Reliability */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.btnPrimary {
+    background: var(--foreground);
+    color: var(--surface);
+}
+
+.btnPrimary:hover {
+    background: #000;
+    transform: translateY(-1px);
+}
+
+.btnSecondary {
+    background: var(--surface);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+}
+
+.btnSecondary:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+}
+
+.btnDanger {
+    background: var(--error-bg);
+    color: var(--error);
+}
+
+.btnDanger:hover {
+    background: #FEE2E2;
 }
