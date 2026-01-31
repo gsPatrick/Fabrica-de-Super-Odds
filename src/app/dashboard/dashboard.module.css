@@ -40,7 +40,6 @@
     gap: 24px;
 }
 
-
 .statCard {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -70,7 +69,6 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
-    /* For Rounded corners */
     box-shadow: var(--shadow-sm);
 }
 
@@ -101,7 +99,6 @@
     transition: background 0.2s;
 }
 
-/* Desktop Grid Layout */
 @media (min-width: 769px) {
     .userCard {
         grid-template-columns: 2fr 1fr 1fr 1fr;
@@ -109,7 +106,6 @@
     }
 }
 
-/* Mobile Card Layout */
 @media (max-width: 768px) {
     .userCard {
         display: flex;
@@ -129,7 +125,6 @@
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    /* Squash circle */
     background: var(--surface-hover);
     display: flex;
     align-items: center;
@@ -170,7 +165,6 @@
     color: var(--success);
     font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.02em;
 }
 
 .statusInactive {
@@ -227,136 +221,116 @@
     border-color: #FECACA;
 }
 
-/* Modal Hint */
-.modalHint {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-bottom: 24px;
-}
-
-/* Usage Container */
-.usageContainer {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--surface-hover);
-    padding: 4px 8px;
-    border-radius: 6px;
-}
-
-.textWarning {
-    color: var(--accent);
-    /* Or warning color */
-    font-weight: 600;
-    font-size: 0.8rem;
-}
-
-.textMuted {
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-}
-
-.iconMuted {
-    color: var(--text-tertiary);
-}
-
-/* Skeleton Loading */
-.skeletonRow {
-    display: flex;
-    align-items: center;
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border);
-}
-
-/* Empty State */
-.emptyState {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 24px;
-    color: var(--text-tertiary);
-    gap: 16px;
-}
-
-.emptyState p {
-    font-size: 0.95rem;
-    font-weight: 500;
-}
-
-/* Modal */
+/* Modals */
 .modalOverlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 100;
+    z-index: 1000;
     padding: 16px;
 }
 
 .modal {
     background: var(--surface);
-    border-radius: 12px;
-    box-shadow: var(--shadow-lg);
-    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    padding: 40px;
     width: 100%;
-    max-width: 480px;
+    max-width: 500px;
+    border: 1px solid var(--border);
 }
 
 .modal h2 {
-    font-size: 1.25rem;
-    margin-bottom: 24px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 12px;
     color: var(--foreground);
+    letter-spacing: -0.02em;
 }
 
 .modalBody {
     font-size: 1rem;
-    line-height: 1.5;
+    line-height: 1.6;
     color: var(--text-secondary);
     margin-bottom: 32px;
 }
 
-.formGroup {
-    margin-bottom: 16px;
+/* History Specific */
+.historyList {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 20px 0;
+    padding-right: 8px;
 }
 
-.formGroup label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 6px;
-}
-
-.datesRow {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
-
-/* Modal Actions */
-.modalActions {
+.historyItem {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
     display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 32px;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Local Button Styles for Reliability */
+.historyItem:last-child {
+    border-bottom: none;
+}
+
+.historyType {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    display: inline-block;
+}
+
+.historyDate {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.historyAmount {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* Form Elements */
+.senior-input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #F9FAFB;
+    font-size: 1rem;
+    transition: all 0.2s;
+    outline: none;
+    font-family: inherit;
+}
+
+.senior-input:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Buttons */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 500;
+    border-radius: 12px;
+    font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 1px solid transparent;
+    border: none;
+    gap: 8px;
 }
 
 .btnPrimary {
@@ -365,26 +339,49 @@
 }
 
 .btnPrimary:hover {
-    background: #000;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .btnSecondary {
-    background: var(--surface);
+    background: white;
     color: var(--foreground);
     border: 1px solid var(--border);
 }
 
 .btnSecondary:hover {
-    background: var(--surface-hover);
+    background: #F9FAFB;
     border-color: var(--border-strong);
 }
 
 .btnDanger {
-    background: var(--error-bg);
-    color: var(--error);
+    background: #FEF2F2;
+    color: #DC2626;
 }
 
 .btnDanger:hover {
     background: #FEE2E2;
+}
+
+.btnLarge {
+    background: var(--foreground);
+    color: var(--surface);
+    padding: 16px 48px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    width: 100%;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btnLarge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.btnLarge:active {
+    transform: translateY(1px);
 }

@@ -13,6 +13,7 @@ function DashboardContent() {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false); // Input Form Modal
     const [confirmModal, setConfirmModal] = useState({ open: false, type: '', data: null }); // Confirmation Action Modal
+    const [historyModal, setHistoryModal] = useState({ open: false, user: null, data: [], balance: 0, loading: false }); // History Modal
     const [feedbackModal, setFeedbackModal] = useState({ open: false, type: 'success', message: '' }); // Success/Error Feedback
 
     const [inviteLink, setInviteLink] = useState(''); // Stores generated link
@@ -110,6 +111,20 @@ function DashboardContent() {
         setInviteName('');
     };
 
+    const viewHistory = async (user) => {
+        setHistoryModal({ open: true, user, data: [], balance: 0, loading: true });
+        try {
+            const res = await fetch(`${API_URL}/api/admin/transactions/history/${user.id_telegram}`, { headers: getHeaders() });
+            if (res.ok) {
+                const data = await res.json();
+                setHistoryModal(prev => ({ ...prev, data: data.transactions, balance: data.balance, loading: false }));
+            }
+        } catch (e) {
+            console.error(e);
+            setHistoryModal(prev => ({ ...prev, loading: false }));
+        }
+    };
+
     // 2. Trigger Confirmation for Actions
     const handlePreAction = (type, id) => {
         const isRevoke = type === 'revoke';
@@ -136,7 +151,7 @@ function DashboardContent() {
                 const next30 = new Date();
                 next30.setDate(now.getDate() + 30);
 
-                const res = await fetch('http://localhost:3000/api/admin/users/allow', {
+                const res = await fetch(`${API_URL}/api/admin/users/allow`, {
                     method: 'POST',
                     headers: getHeaders(),
                     body: JSON.stringify({
@@ -147,10 +162,9 @@ function DashboardContent() {
                 });
                 if (!res.ok) throw new Error('Falha ao autorizar');
                 setFeedbackModal({ open: true, type: 'success', message: `Usuário ${data.id} autorizado e notificado!` });
-                setNewUser({ id: '' });
             }
             else if (type === 'revoke') {
-                await fetch('http://localhost:3000/api/admin/users/revoke', {
+                await fetch(`${API_URL}/api/admin/users/revoke`, {
                     method: 'POST',
                     headers: getHeaders(),
                     body: JSON.stringify({ id_telegramOrUsername: data })
@@ -158,7 +172,7 @@ function DashboardContent() {
                 setFeedbackModal({ open: true, type: 'success', message: 'Acesso desativado com sucesso.' });
             }
             else if (type === 'remove') {
-                await fetch('http://localhost:3000/api/admin/users/remove', {
+                await fetch(`${API_URL}/api/admin/users/remove`, {
                     method: 'DELETE',
                     headers: getHeaders(),
                     body: JSON.stringify({ id_telegram: data })
@@ -207,7 +221,7 @@ function DashboardContent() {
                             : `Listando ${filteredUsers.length} registros nesta categoria.`}
                     </p>
                 </div>
-                <button className="senior-btn" onClick={() => setShowModal(true)}>
+                <button className={styles.btnPrimary} onClick={() => setShowModal(true)}>
                     <LinkIcon size={18} style={{ marginRight: '8px' }} />
                     Gerar Link de Convite
                 </button>
@@ -335,7 +349,11 @@ function DashboardContent() {
                                         </div>
 
                                         <div className={styles.actions}>
-                                            <button className={styles.iconBtn} onClick={() => setFeedbackModal({ open: true, type: 'info', message: 'Funcionalidade de histórico em breve!' })} title="Ver Histórico">
+                                            <button
+                                                className={styles.iconBtn}
+                                                onClick={() => viewHistory(user)}
+                                                title="Ver Histórico"
+                                            >
                                                 <FileText size={18} />
                                             </button>
                                             {user.allowed && (
@@ -428,6 +446,54 @@ function DashboardContent() {
                 </div>
             )}
 
+            {/* History Modal */}
+            {historyModal.open && (
+                <div className={styles.modalOverlay} style={{ zIndex: 115 }}>
+                    <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className={styles.modal}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <div>
+                                <h2>Histórico</h2>
+                                <p className={styles.subtitle}>{historyModal.user?.name || historyModal.user?.id_telegram}</p>
+                            </div>
+                            <div className={styles.statCard} style={{ padding: '10px 20px' }}>
+                                <div className={styles.statLabel}>SALDO</div>
+                                <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>R$ {historyModal.balance.toFixed(2)}</div>
+                            </div>
+                        </div>
+
+                        <div className={styles.historyList}>
+                            {historyModal.loading ? (
+                                <div style={{ textAlign: 'center', padding: '40px' }}><Skeleton height="100px" /></div>
+                            ) : historyModal.data.length === 0 ? (
+                                <p style={{ textAlign: 'center', py: 4, color: 'var(--text-tertiary)' }}>Nenhuma transação encontrada.</p>
+                            ) : (
+                                historyModal.data.map((t, idx) => (
+                                    <div key={idx} className={styles.historyItem}>
+                                        <div>
+                                            <span className={styles.historyType} style={{
+                                                background: t.type === 'ganho' ? 'var(--success-bg)' : 'var(--error-bg)',
+                                                color: t.type === 'ganho' ? 'var(--success)' : 'var(--error)'
+                                            }}>
+                                                {t.type}
+                                            </span>
+                                            <div style={{ fontWeight: 600 }}>{t.description || 'Sem descrição'}</div>
+                                            <div className={styles.historyDate}>{new Date(t.date).toLocaleString()}</div>
+                                        </div>
+                                        <div className={styles.historyAmount} style={{ color: t.type === 'ganho' ? 'var(--success)' : 'var(--error)' }}>
+                                            {t.type === 'ganho' ? '+' : ''}{t.amount}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+
+                        <div className={styles.modalActions} style={{ justifyContent: 'center' }}>
+                            <button onClick={() => setHistoryModal({ ...historyModal, open: false })} className={styles.btnSecondary}>Fechar Histórico</button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+
             {/* Confirmation Modal */}
             {confirmModal.open && (
                 <div className={styles.modalOverlay} style={{ zIndex: 110 }}>
@@ -451,10 +517,10 @@ function DashboardContent() {
             {/* Feedback Modal */}
             {feedbackModal.open && (
                 <div className={styles.modalOverlay} style={{ zIndex: 120 }}>
-                    <motion.div 
-                        initial={{ scale: 0.9, opacity: 0 }} 
-                        animate={{ scale: 1, opacity: 1 }} 
-                        className={styles.modal} 
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className={styles.modal}
                         style={{ textAlign: 'center', maxWidth: '400px', padding: '40px' }}
                     >
                         <div style={{ marginBottom: '24px' }}>
@@ -471,8 +537,8 @@ function DashboardContent() {
                             {feedbackModal.message}
                         </p>
                         <div className={styles.modalActions} style={{ justifyContent: 'center' }}>
-                            <button 
-                                onClick={() => setFeedbackModal({ ...feedbackModal, open: false })} 
+                            <button
+                                onClick={() => setFeedbackModal({ ...feedbackModal, open: false })}
                                 className={styles.btnLarge}
                             >
                                 Entendido
