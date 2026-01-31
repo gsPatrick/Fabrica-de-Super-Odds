@@ -17,8 +17,10 @@ export default function LoginPage() {
         if (!email || !password) return;
 
         setIsLoading(true);
+        setIsLoading(true);
         try {
-            const res = await fetch('http://localhost:3000/api/admin/users/login', {
+            const API_URL = 'https://geral-fabricadesuperodssapi.r954jc.easypanel.host';
+            const res = await fetch(`${API_URL}/api/admin/users/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
