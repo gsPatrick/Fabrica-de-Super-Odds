@@ -18,6 +18,8 @@ function DashboardContent() {
 
     const [inviteLink, setInviteLink] = useState(''); // Stores generated link
     const [inviteName, setInviteName] = useState(''); // Name for the invite
+    const [inviteDays, setInviteDays] = useState(30); // Days for the invite
+    const [editAccessModal, setEditAccessModal] = useState({ open: false, user: null, endDate: '' }); // Edit User Access Modal
     // Init with Zeros to satisfy "Make it appear even if zeroed"
     const [analytics, setAnalytics] = useState({
         users: { total: 0, active: 0, blocked: 0, pending: 0 },
@@ -82,7 +84,7 @@ function DashboardContent() {
             const res = await fetch(`${API_URL}/api/admin/users/invite`, {
                 method: 'POST',
                 headers: getHeaders(),
-                body: JSON.stringify({ days: 30, name: inviteName }) // Custom name
+                body: JSON.stringify({ days: inviteDays, name: inviteName }) // Custom days and name
             });
             if (res.ok) {
                 const data = await res.json();
@@ -110,6 +112,7 @@ function DashboardContent() {
         setShowModal(false);
         setInviteLink('');
         setInviteName('');
+        setInviteDays(30);
     };
 
     const viewHistory = async (user) => {
@@ -123,6 +126,37 @@ function DashboardContent() {
         } catch (e) {
             console.error(e);
             setHistoryModal(prev => ({ ...prev, loading: false }));
+        }
+    };
+
+    const openEditAccess = (user) => {
+        const dateStr = user.end_date ? new Date(user.end_date).toISOString().split('T')[0] : '';
+        setEditAccessModal({ open: true, user, endDate: dateStr });
+    };
+
+    const confirmUpdateAccess = async () => {
+        try {
+            setLoading(true);
+            const res = await fetch(`${API_URL}/api/admin/users/update-access`, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify({
+                    id_telegram: editAccessModal.user.id_telegram,
+                    endDate: editAccessModal.endDate
+                })
+            });
+
+            if (res.ok) {
+                setFeedbackModal({ open: true, type: 'success', message: 'Acesso atualizado com sucesso!' });
+                setEditAccessModal({ open: false, user: null, endDate: '' });
+                fetchUsers();
+            } else {
+                throw new Error('Falha ao atualizar acesso.');
+            }
+        } catch (error) {
+            setFeedbackModal({ open: true, type: 'error', message: error.message });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -352,6 +386,13 @@ function DashboardContent() {
                                         <div className={styles.actions}>
                                             <button
                                                 className={styles.iconBtn}
+                                                onClick={() => openEditAccess(user)}
+                                                title="Editar Dias de Acesso"
+                                            >
+                                                <Calendar size={18} />
+                                            </button>
+                                            <button
+                                                className={styles.iconBtn}
                                                 onClick={() => viewHistory(user)}
                                                 title="Ver Histórico"
                                             >
@@ -381,7 +422,7 @@ function DashboardContent() {
                         animate={{ scale: 1, opacity: 1 }}
                         className={styles.modal}
                     >
-                        <h2>Link de Convite (30 Dias)</h2>
+                        <h2>Link de Convite</h2>
 
                         {!inviteLink ? (
                             <div style={{ textAlign: 'center', padding: '20px 0' }}>
@@ -389,14 +430,26 @@ function DashboardContent() {
                                     Gere um link único para enviar ao aluno. <br />
                                     O nome será registrado automaticamente quando ele aceitar.
                                 </p>
-                                <div className={styles.formGroup} style={{ marginBottom: '24px', textAlign: 'left' }}>
-                                    <label>Nome do Aluno (Opcional)</label>
-                                    <input
-                                        className="senior-input"
-                                        placeholder="Ex: João Silva"
-                                        value={inviteName}
-                                        onChange={(e) => setInviteName(e.target.value)}
-                                    />
+                                <div className={styles.formGroup} style={{ marginBottom: '16px', textAlign: 'left', display: 'flex', gap: '15px' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <label>Nome do Aluno (Opcional)</label>
+                                        <input
+                                            className="senior-input"
+                                            placeholder="Ex: João Silva"
+                                            value={inviteName}
+                                            onChange={(e) => setInviteName(e.target.value)}
+                                        />
+                                    </div>
+                                    <div style={{ width: '100px' }}>
+                                        <label>Dias</label>
+                                        <input
+                                            type="number"
+                                            className="senior-input"
+                                            value={inviteDays}
+                                            onChange={(e) => setInviteDays(parseInt(e.target.value))}
+                                            min="1"
+                                        />
+                                    </div>
                                 </div>
                                 <button
                                     onClick={createInvite}
@@ -543,6 +596,42 @@ function DashboardContent() {
                                 className={styles.btnLarge}
                             >
                                 Entendido
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+
+            {/* Edit Access Modal */}
+            {editAccessModal.open && (
+                <div className={styles.modalOverlay} style={{ zIndex: 110 }}>
+                    <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className={styles.modal}>
+                        <h2>Editar Dias de Acesso</h2>
+                        <p className={styles.modalBody}>
+                            Usuário: <b>{editAccessModal.user?.username ? `@${editAccessModal.user.username}` : editAccessModal.user?.id_telegram}</b>
+                        </p>
+
+                        <div className={styles.formGroup} style={{ marginTop: '20px' }}>
+                            <label>Expira em:</label>
+                            <input
+                                type="date"
+                                className="senior-input"
+                                value={editAccessModal.endDate}
+                                onChange={(e) => setEditAccessModal({ ...editAccessModal, endDate: e.target.value })}
+                            />
+                            <p className={styles.modalHint} style={{ marginTop: '8px' }}>
+                                O acesso será revogado automaticamente após esta data.
+                            </p>
+                        </div>
+
+                        <div className={styles.modalActions}>
+                            <button onClick={() => setEditAccessModal({ open: false, user: null, endDate: '' })} className={`${styles.btn} ${styles.btnSecondary}`}>Cancelar</button>
+                            <button
+                                onClick={confirmUpdateAccess}
+                                className={`${styles.btn} ${styles.btnPrimary}`}
+                                disabled={loading}
+                            >
+                                {loading ? 'Salvando...' : 'Salvar Alteração'}
                             </button>
                         </div>
                     </motion.div>
